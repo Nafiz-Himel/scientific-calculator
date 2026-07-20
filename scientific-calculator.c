@@ -3,18 +3,18 @@
 
 double simple_func(double a, double b, char op)
 {
-    if (op == '+') 
+    if (op == '+')
         return a + b;
-    if (op == '-') 
+    if (op == '-')
         return a - b;
-    if (op == '*') 
+    if (op == '*')
         return a * b;
 
     if (op == '/')
     {
         if (b == 0)
         {
-            printf("Error: Division by zero!\n");
+            printf("Error: Division by zero.\n");
             return NAN;
         }
         return a / b;
@@ -25,14 +25,14 @@ double simple_func(double a, double b, char op)
 
 double power_mod_func(double a, double b, char op)
 {
-    if (op == '^') 
+    if (op == '^')
         return pow(a, b);
 
     if (op == '%')
     {
         if (b == 0)
         {
-            printf("Error: Modulos by zero!\n");
+            printf("Error: Modulos by zero.\n");
             return NAN;
         }
         return fmod(a, b);
@@ -51,16 +51,16 @@ double trigo_func(double angle, char op, char mode)
         angle = rad_angle;
     }
 
-    if (op == 's') 
+    if (op == 's')
         return sin(angle);
-    if (op == 'c') 
+    if (op == 'c')
         return cos(angle);
 
     if (op == 't')
     {
         if (fabs(cos(angle)) < 1e-9)
         {
-            printf("Error: tan undefined!\n");
+            printf("Error: tan(90) undefined.\n");
             return NAN;
         }
         return tan(angle);
@@ -73,32 +73,36 @@ double unary_func(double a, char op)
 {
     if (op == 'q') {
         if (a < 0) {
+            printf("Error: sqrt undefined for negative number.\n");
             return NAN;
         }
         return sqrt(a);
     }
-    
+
     if (op == 'l') {
         if (a <= 0) {
+            printf("Error: ln undefined for non-positive value.\n");
             return NAN;
         }
         return log(a);
     }
-    
+
     if (op == 'L') {
         if (a <= 0) {
+            printf("Error: log10 undefined for non-positive value.\n");
             return NAN;
         }
         return log10(a);
     }
-    
+
     if (op == 'r') {
         if (a == 0) {
+            printf("Error: reciprocal undefined for zero.\n");
             return NAN;
         }
         return 1.0 / a;
     }
-    
+
     if (op == 'a') {
         return fabs(a);
     }
@@ -110,8 +114,7 @@ void print_guide()
 {
     printf("\n=========== SCIENTIFIC CALCULATOR GUIDE ===========\n");
 
-    printf("\nStart:\n");
-    printf("  Enter initial value (example: 5)\n");
+    printf("\nStart: Enter initial value (example: 5)\n");
 
     printf("\nOperators:\n");
     printf("  +  Addition\n");
@@ -138,8 +141,7 @@ void print_guide()
     printf("   + c r 3.14\n");
     printf("   + t d 45\n");
 
-    printf("\nEnd:\n");
-    printf("  =   to finish\n");
+    printf("\nEnd: =   to finish\n\n");
 
     printf("==================================================\n\n");
 }
@@ -202,7 +204,7 @@ int main()
 
         if (isnan(right_val))
         {
-            printf("Math error!\n");
+            printf("Invalid input, try again!\n");
             continue;
         }
 
@@ -214,7 +216,7 @@ int main()
         if (isnan(res))
         {
             printf("Math error!\n");
-            break;
+            return 0;
         }
     }
 
