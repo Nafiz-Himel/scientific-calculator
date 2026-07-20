@@ -1,97 +1,223 @@
 #include <stdio.h>
 #include <math.h>
 
-double simple_cal(double input_num1, double input_num2, char operator)
+double simple_func(double a, double b, char op)
 {
-    double prev_res = input_num1;
-    if (operator == '+')
-        return (input_num1 + input_num2);
-    else if (operator == '-')
-        return (input_num1 - input_num2);
-    else if (operator == '*')
-        return (input_num1 * input_num2);
-    else if (operator == '/')
+    if (op == '+') 
+        return a + b;
+    if (op == '-') 
+        return a - b;
+    if (op == '*') 
+        return a * b;
+
+    if (op == '/')
     {
-        if (input_num2 != 0)
-            return (input_num1 / input_num2);
-        else
+        if (b == 0)
         {
-            printf("Error: Division by zero! Retaining previous value.\n");
-            return prev_res;
+            printf("Error: Division by zero!\n");
+            return NAN;
         }
+        return a / b;
     }
-    return prev_res;
+
+    return NAN;
 }
 
-double trigo_cal(double value, char operator, char degree_radian)
+double power_mod_func(double a, double b, char op)
 {
-    double value_after_decision = value, PI = 3.14159265358979323846;
+    if (op == '^') 
+        return pow(a, b);
 
-    while (degree_radian != 'd' && degree_radian != 'r')
+    if (op == '%')
     {
-        printf("Invalid Mode! Enter again (d/r): ");
-        if (scanf(" %c", &degree_radian) == EOF) 
-            return 0;
+        if (b == 0)
+        {
+            printf("Error: Modulos by zero!\n");
+            return NAN;
+        }
+        return fmod(a, b);
     }
-    if (degree_radian == 'd')
+
+    return NAN;
+}
+
+double trigo_func(double angle, char op, char mode)
+{
+    const double PI = 3.141592653589793;
+
+    if (mode == 'd')
     {
-        value_after_decision = value * (PI / 180.0);
+        double rad_angle = angle * PI / 180.0;
+        angle = rad_angle;
     }
 
-    if (operator == 's')
-        return sin(value_after_decision);
-    else if (operator == 'c')
-        return cos(value_after_decision);
-    else if (operator == 't')
-        return tan(value_after_decision);
+    if (op == 's') 
+        return sin(angle);
+    if (op == 'c') 
+        return cos(angle);
 
-    return 0;
+    if (op == 't')
+    {
+        if (fabs(cos(angle)) < 1e-9)
+        {
+            printf("Error: tan undefined!\n");
+            return NAN;
+        }
+        return tan(angle);
+    }
+
+    return NAN;
+}
+
+double unary_func(double a, char op)
+{
+    if (op == 'q') {
+        if (a < 0) {
+            return NAN;
+        }
+        return sqrt(a);
+    }
+    
+    if (op == 'l') {
+        if (a <= 0) {
+            return NAN;
+        }
+        return log(a);
+    }
+    
+    if (op == 'L') {
+        if (a <= 0) {
+            return NAN;
+        }
+        return log10(a);
+    }
+    
+    if (op == 'r') {
+        if (a == 0) {
+            return NAN;
+        }
+        return 1.0 / a;
+    }
+    
+    if (op == 'a') {
+        return fabs(a);
+    }
+
+    return NAN;
+}
+
+void print_guide()
+{
+    printf("\n=========== SCIENTIFIC CALCULATOR GUIDE ===========\n");
+
+    printf("\nStart:\n");
+    printf("  Enter initial value (example: 5)\n");
+
+    printf("\nOperators:\n");
+    printf("  +  Addition\n");
+    printf("  -  Subtraction\n");
+    printf("  *  Multiplication\n");
+    printf("  /  Division\n");
+    printf("  ^  Power\n");
+    printf("  %%  Modulo\n");
+
+    printf("\nInput Format:\n");
+
+    printf("\n1. Number:\n");
+    printf("   + n 5\n");
+
+    printf("\n2. Unary:\n");
+    printf("   + q 16   (sqrt)\n");
+    printf("   + l 2.7  (ln)\n");
+    printf("   + L 100  (log10)\n");
+    printf("   + r 5    (1/x)\n");
+    printf("   + a -10  (abs)\n");
+
+    printf("\n3. Trigonometry:\n");
+    printf("   + s d 90\n");
+    printf("   + c r 3.14\n");
+    printf("   + t d 45\n");
+
+    printf("\nEnd:\n");
+    printf("  =   to finish\n");
+
+    printf("==================================================\n\n");
 }
 
 int main()
 {
-    double res = 0;
-    char operator;
+    double res;
 
-    if (scanf("%lf", &res) == EOF)
+    print_guide();
+
+    printf("Enter initial value: ");
+    if (scanf("%lf", &res) != 1)
         return 0;
 
     while (1)
     {
-        printf("Current Total: %.2lf\n", res);
-        
-        if (scanf(" %c", &operator) == EOF || operator == '=')
-        {
+        printf("\nCurrent: %.4lf\n", res);
+
+        char op;
+        printf("Operator: ");
+        scanf(" %c", &op);
+
+        if (op == '=')
             break;
+
+        if (op != '+' && op != '-' && op != '*' && op != '/' && op != '^' && op != '%')
+        {
+            printf("Invalid operator!\n");
+            continue;
         }
 
-        if (operator == '+' || operator == '-' || operator == '*' || operator == '/')
-        {
-            double next_num;
-            if (scanf("%lf", &next_num) == EOF)
-            {
-                break;
-            }
-            res = simple_cal(res, next_num, operator); 
-        }
-        else if (operator == 's' || operator == 'c' || operator == 't')
-        {
-            double value;
-            char degree_radian;
-            if (scanf("%lf %c", &value, &degree_radian) == EOF)
-            {
-                break;
-            }
+        char type;
+        scanf(" %c", &type);
 
-            res = trigo_cal(value, operator, degree_radian);
+        double right_val;
+
+        if (type == 'n') //number
+        {
+            scanf("%lf", &right_val);
+        }
+        else if (type == 'q' || type == 'l' || type == 'L' || type == 'r' || type == 'a') //unary
+        {
+            double val;
+            scanf("%lf", &val);
+            right_val = unary_func(val, type);
+        }
+        else if (type == 's' || type == 'c' || type == 't') //trigonometry
+        {
+            char mode;
+            double angle;
+
+            scanf(" %c %lf", &mode, &angle);
+            right_val = trigo_func(angle, type, mode);
         }
         else
         {
-            printf("Invalid operator!\n");
+            printf("Invalid input type!\n");
+            continue;
+        }
+
+        if (isnan(right_val))
+        {
+            printf("Math error!\n");
+            continue;
+        }
+
+        if (op == '^' || op == '%')
+            res = power_mod_func(res, right_val, op);
+        else
+            res = simple_func(res, right_val, op);
+
+        if (isnan(res))
+        {
+            printf("Math error!\n");
+            break;
         }
     }
 
-    printf("\nFinal Result: %.2lf\n", res);
-
+    printf("\nFinal Result: %.4lf\n", res);
     return 0;
 }
